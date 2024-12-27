@@ -1,6 +1,5 @@
-from sqlalchemy import Engine
+from db.models import create_tables
 
-from db.models import Asset
-
-if __name__ == '__main__':
-    Asset.__table__.create(Engine)
+if __name__ == "__main__":
+    create_tables()
+    print("Tablas creadas correctamente.")

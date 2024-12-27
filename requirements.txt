@@ -1,0 +1,9 @@
+fastapi~=0.115.6
+uvicorn
+python-telegram-bot
+sqlalchemy~=2.0.36
+yahoo-fin
+loguru~=0.7.3
+pydantic
+requests~=2.32.3
+python-dotenv~=1.0.1
