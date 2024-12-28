@@ -1,14 +1,17 @@
 import os
 from datetime import datetime, timedelta
-
-import uvicorn
-from dotenv import load_dotenv
 from fastapi import FastAPI
+from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
+import uvicorn
 
-from managers.assets_manager import obtener_precio_reciente, obtener_precio_por_fecha, actualizar_precio_en_bd, \
-    actualizar_todos_los_precios
+from managers.assets_manager import (
+    obtener_precio_reciente,
+    obtener_precio_por_fecha,
+    actualizar_precio_en_bd,
+    actualizar_todos_los_precios,
+)
 
 app = FastAPI()
 
@@ -19,11 +22,13 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 if not TELEGRAM_BOT_TOKEN:
     raise ValueError("El TOKEN del bot de Telegram no está configurado correctamente en el archivo .env")
 
+
 @app.get("/")
 def read_root():
-    return {"Bienvenido a CotizAPI"}
+    return {"message": "Bienvenido a CotizAPI"}
 
-# Comando /start
+
+# Comandos de Telegram
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "¡Hola! Soy tu bot financiero. Estos son los comandos disponibles:\n"
@@ -33,9 +38,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-# Comando /assets
 async def assets(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    activos = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]  # Símbolos para Oro, Plata, Bitcoin, Trigo, Petróleo
+    activos = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]  # Oro, Plata, Bitcoin, Trigo, Petróleo
     mensajes = []
 
     for simbolo in activos:
@@ -51,6 +55,7 @@ async def assets(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def daily(update: Update, context: ContextTypes.DEFAULT_TYPE):
     activos = ["oro", "plata", "bitcoin", "trigo", "petróleo"]
     mensajes = []
+
     for simbolo in activos:
         precio_actual = obtener_precio_reciente(simbolo.upper())
         if precio_actual:
@@ -69,6 +74,7 @@ async def daily(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def weekly(update: Update, context: ContextTypes.DEFAULT_TYPE):
     activos = ["oro", "plata", "bitcoin", "trigo", "petróleo"]
     mensajes = []
+
     for simbolo in activos:
         precio_actual = obtener_precio_reciente(simbolo.upper())
         if precio_actual:
@@ -84,18 +90,8 @@ async def weekly(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("\n".join(mensajes))
 
 
-from apscheduler.schedulers.background import BackgroundScheduler
-
-def iniciar_tareas_periodicas():
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(actualizar_todos_los_precios, "interval", hours=1)  # Ejecuta cada 1 hora
-    scheduler.start()
-    print("Tarea periódica configurada para actualizar los precios.")
-
-
-# Configuración principal del bot
 def main():
-    # Crear la aplicación del bot
+    # Crear la aplicación del bot de Telegram
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
     # Agregar manejadores de comandos
@@ -104,15 +100,24 @@ def main():
     application.add_handler(CommandHandler("daily", daily))
     application.add_handler(CommandHandler("weekly", weekly))
 
-    # Iniciar el bot
+    # Ejecutar el bot en el mismo bucle de eventos principal
     print("El bot está en funcionamiento...")
     application.run_polling()
 
 
 if __name__ == "__main__":
-    # Configuración del host y puerto
-    host = "192.168.1.42"  # Cambia por tu IP si es necesario
-    port = 8000
+    # Ejecutar FastAPI y Telegram en el mismo proceso
+    from multiprocessing import Process
 
-    # Arranca el servidor Uvicorn
-    uvicorn.run("main:app", host=host, port=port, reload=True)
+    # Ejecutar el bot en un proceso separado
+    bot_process = Process(target=main)
+    bot_process.start()
+
+    # Ejecutar FastAPI
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", 8040))
+    uvicorn.run(app, host=host, port=port)
+
+    # Esperar al proceso del bot
+    bot_process.join()
+

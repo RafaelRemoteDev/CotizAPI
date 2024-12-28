@@ -4,21 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="database, fastapi, estructure.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/db/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/db/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/managers/assets_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/managers/assets_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/managers/notifications_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/managers/notifications_manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routers/assets.py" beforeDir="false" afterPath="$PROJECT_DIR$/routers/assets.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routers/prices.py" beforeDir="false" afterPath="$PROJECT_DIR$/routers/prices.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/tablas.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/tablas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/yahoo_finance.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/yahoo_finance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/telegram_bot/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram_bot/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/logging_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/logging_config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,6 +130,19 @@
       <option name="presentableId" value="Default" />
       <updated>1734605627998</updated>
     </task>
+    <task id="LOCAL-00001" summary="database, fastapi, estructure.">
+      <option name="closed" value="true" />
+      <created>1735292733135</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1735292733135</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="database, fastapi, estructure." />
+    <option name="LAST_COMMIT_MESSAGE" value="database, fastapi, estructure." />
   </component>
 </project>
