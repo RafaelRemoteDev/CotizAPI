@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="conexion vercel" />
+    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="conexion vercel x2" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -142,12 +142,29 @@
       <option name="project" value="LOCAL" />
       <updated>1735410531902</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="conexion vercel x2">
+      <option name="closed" value="true" />
+      <created>1735411380569</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1735411380569</updated>
+    </task>
+    <task id="LOCAL-00004" summary="conexion vercel x2">
+      <option name="closed" value="true" />
+      <created>1735411442195</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1735411442195</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="database, fastapi, estructure." />
     <MESSAGE value="conexion vercel" />
-    <option name="LAST_COMMIT_MESSAGE" value="conexion vercel" />
+    <MESSAGE value="conexion vercel x2" />
+    <option name="LAST_COMMIT_MESSAGE" value="conexion vercel x2" />
   </component>
 </project>
