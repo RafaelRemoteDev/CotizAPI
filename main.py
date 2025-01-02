@@ -51,7 +51,7 @@ async def shutdown():
 @app.get("/")
 def read_root():
     """Endpoint raíz para confirmar que la API está activa."""
-    return {"message": "¡Bienvenido a CotizAPI! Tu API financiera está lista para recibir comandos."}
+    return {"¡Bienvenido a CotizAPI! Tu API financiera está lista para recibir comandos."}
 
 @app.post("/webhook")
 async def telegram_webhook(request: Request):
@@ -60,6 +60,11 @@ async def telegram_webhook(request: Request):
     update = Update.de_json(json_update, telegram_app.bot)
     await telegram_app.process_update(update)
     return {"ok": True}
+
+@app.get("/health")
+def health_check():
+    """Sonda de salud para mantener el contenedor activo."""
+    return {"status": "ok"}
 
 # === Registro de comandos ===
 telegram_app.add_handler(CommandHandler("start", lambda update, context: update.message.reply_text("¡Hola! Bot activo.")))
