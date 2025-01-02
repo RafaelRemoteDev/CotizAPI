@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="conexion vercel x2">
+    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="webhook + conexion a railway">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cotizapi.db" beforeDir="false" afterPath="$PROJECT_DIR$/cotizapi.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
@@ -178,13 +179,22 @@
       <option name="project" value="LOCAL" />
       <updated>1735411823447</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="webhook + conexion a railway">
+      <option name="closed" value="true" />
+      <created>1735839780325</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1735839780325</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="database, fastapi, estructure." />
     <MESSAGE value="conexion vercel" />
     <MESSAGE value="conexion vercel x2" />
-    <option name="LAST_COMMIT_MESSAGE" value="conexion vercel x2" />
+    <MESSAGE value="webhook + conexion a railway" />
+    <option name="LAST_COMMIT_MESSAGE" value="webhook + conexion a railway" />
   </component>
 </project>
