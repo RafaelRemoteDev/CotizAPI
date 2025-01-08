@@ -1,161 +1,145 @@
-import os
-from datetime import datetime, timedelta
-from fastapi import FastAPI
+import sqlite3
+
+import datetime
+from fastapi import FastAPI, Request
+from managers.assets_manager import obtener_precio_reciente, obtener_precio_por_fecha
+from tasks.update_prices import update_prices_task
+from tasks.send_alerts import send_alerts_task
+from telegram import Update, Bot
 from dotenv import load_dotenv
-from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
-import uvicorn
+import os
+import asyncio
 
-from managers.assets_manager import (
-    obtener_precio_reciente,
-    obtener_precio_por_fecha,
-    actualizar_precio_en_bd,
-    actualizar_todos_los_precios,
-)
-
-app = FastAPI()
-
-# Cargar las variables de entorno desde el archivo .env
+# Cargar variables de entorno
 load_dotenv()
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-
 if not TELEGRAM_BOT_TOKEN:
     raise ValueError("El TOKEN del bot de Telegram no está configurado correctamente en el archivo .env")
 
+bot = Bot(token=TELEGRAM_BOT_TOKEN)
+
+# FastAPI app
+app = FastAPI()
 
 @app.get("/")
-def read_root():
+async def root():
     return {"Bienvenido a CotizAPI"}
 
 
-# Comandos de Telegram
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "¡Hola! Soy tu bot financiero. Estos son los comandos disponibles:\n"
-        "/assets - Precio actual de los activos.\n"
-        "/daily - Variación respecto al día anterior.\n"
-        "/weekly - Variación respecto a la semana pasada."
-    )
+@app.post("/webhook")
+async def webhook(request: Request):
+    """Endpoint que procesa las actualizaciones de Telegram."""
+    data = await request.json()
+    update = Update.de_json(data, bot)
+    asyncio.create_task(process_update(update))
+    return {"ok": True}
 
+async def process_update(update: Update):
+    """Procesa los comandos recibidos por Telegram."""
+    chat_id = update.message.chat_id
+    text = update.message.text
 
-async def assets(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    activos = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]  # Oro, Plata, Bitcoin, Trigo, Petróleo
+    if text == "/start":
+        await bot.send_message(chat_id, (
+            "¡Hola! Soy tu bot financiero. Estos son los comandos disponibles:\n"
+            "/assets - Precio actual de los activos.\n"
+            "/daily - Variación respecto al día anterior.\n"
+            "/weekly - Variación respecto a la semana pasada.\n"
+            "/alertas - Ver las alertas recientes."
+        ))
+    elif text == "/assets":
+        await send_assets(chat_id)
+    elif text == "/daily":
+        await send_daily(chat_id)
+    elif text == "/weekly":
+        await send_weekly(chat_id)
+    elif text == "/alertas":
+        await send_alertas(chat_id)
+
+async def send_assets(chat_id):
+    """Muestra los precios actuales de los activos."""
+    activos = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]
     mensajes = []
-
     for simbolo in activos:
-        precio = actualizar_precio_en_bd(simbolo)
-        if precio:
-            mensajes.append(f"{simbolo}: {precio:.2f} USD")
+        precio_data = obtener_precio_reciente(simbolo)
+        if precio_data:
+            precio, fecha = precio_data
+            mensajes.append(f"{simbolo}: {precio:.2f} USD (Última actualización: {fecha})")
         else:
             mensajes.append(f"{simbolo}: No se pudo obtener el precio.")
+    await bot.send_message(chat_id, "\n".join(mensajes))
 
-    await update.message.reply_text("\n".join(mensajes))
-
-
-async def daily(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # Mapeo entre nombres comunes y símbolos de la base de datos
-    activos_map = {
-        "oro": "GC=F",
-        "plata": "SI=F",
-        "bitcoin": "BTC-USD",
-        "trigo": "ZW=F",
-        "petróleo": "CL=F"
-    }
-
-    # Activos que deseas procesar
-    activos = ["oro", "plata", "bitcoin", "trigo", "petróleo"]
+async def send_daily(chat_id):
+    """Calcula la variación diaria de los activos."""
+    activos = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]
     mensajes = []
-
-    # Procesar cada activo
     for simbolo in activos:
-        # Convertir el nombre común al símbolo en la base de datos
-        simbolo_db = activos_map[simbolo]
-
-        # Obtener el precio actual desde la base de datos
-        precio_actual = obtener_precio_reciente(simbolo_db)
-
+        precio_actual = obtener_precio_reciente(simbolo)
         if precio_actual:
             fecha_ayer = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
-            precio_ayer = obtener_precio_por_fecha(simbolo_db, fecha_ayer)
+            precio_ayer = obtener_precio_por_fecha(simbolo, fecha_ayer)
             if precio_ayer:
-                variación = ((precio_actual[0] - precio_ayer) / precio_ayer) * 100
-                mensajes.append(f"{simbolo.capitalize()}: Variación diaria {variación:.2f}%")
+                variacion = ((precio_actual[0] - precio_ayer) / precio_ayer) * 100
+                mensajes.append(f"{simbolo}: Variación diaria {variacion:.2f}%")
             else:
-                mensajes.append(f"{simbolo.capitalize()}: No hay datos para el día anterior.")
+                mensajes.append(f"{simbolo}: No hay datos del día anterior.")
         else:
-            mensajes.append(f"{simbolo.capitalize()}: No hay datos disponibles.")
+            mensajes.append(f"{simbolo}: No hay datos disponibles.")
+    await bot.send_message(chat_id, "\n".join(mensajes))
 
-    # Responder al usuario con los mensajes generados
-    await update.message.reply_text("\n".join(mensajes))
-
-
-async def weekly(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # Mapeo entre nombres comunes y símbolos en la base de datos
-    activos_map = {
-        "oro": "GC=F",
-        "plata": "SI=F",
-        "bitcoin": "BTC-USD",
-        "trigo": "ZW=F",
-        "petróleo": "CL=F"
-    }
-
-    # Activos a procesar
-    activos = ["oro", "plata", "bitcoin", "trigo", "petróleo"]
+async def send_weekly(chat_id):
+    """Calcula la variación semanal de los activos."""
+    activos = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]
     mensajes = []
-
-    # Procesar cada activo
     for simbolo in activos:
-        simbolo_db = activos_map[simbolo]
-
-        # Obtener el precio actual desde la base de datos
-        precio_actual = obtener_precio_reciente(simbolo_db)
-
+        precio_actual = obtener_precio_reciente(simbolo)
         if precio_actual:
-            # Obtener la fecha de hace 7 días
             fecha_hace_una_semana = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
-            precio_semana_pasada = obtener_precio_por_fecha(simbolo_db, fecha_hace_una_semana)
-
+            precio_semana_pasada = obtener_precio_por_fecha(simbolo, fecha_hace_una_semana)
             if precio_semana_pasada:
                 variacion = ((precio_actual[0] - precio_semana_pasada) / precio_semana_pasada) * 100
-                mensajes.append(f"{simbolo.capitalize()}: Variación semanal {variacion:.2f}%")
+                mensajes.append(f"{simbolo}: Variación semanal {variacion:.2f}%")
             else:
-                # Si no hay datos para hace 7 días
-                mensajes.append(f"{simbolo.capitalize()}: No hay datos para hace 7 días.")
+                mensajes.append(f"{simbolo}: No hay datos de hace una semana.")
         else:
-            # Si no hay datos recientes
-            mensajes.append(f"{simbolo.capitalize()}: No hay datos disponibles.")
+            mensajes.append(f"{simbolo}: No hay datos disponibles.")
+    await bot.send_message(chat_id, "\n".join(mensajes))
 
-    # Responder con los resultados
-    await update.message.reply_text("\n".join(mensajes))
+async def send_alertas(chat_id):
+    """Consulta y envía las alertas recientes."""
+    db_path = "cotizapi.db"
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT mensaje, fecha 
+        FROM alertas 
+        WHERE fecha >= datetime('now', '-1 day')
+    """)
+    alertas = cursor.fetchall()
+    conn.close()
+
+    if not alertas:
+        await bot.send_message(chat_id, "✅ No hay alertas recientes.")
+    else:
+        mensajes = "\n".join([f"{fecha} - {mensaje}" for mensaje, fecha in alertas])
+        await bot.send_message(chat_id, f"🔔 Alertas recientes:\n\n{mensajes}")
 
 
-def main():
-    # Crear la aplicación del bot de Telegram
-    application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
-
-    # Agregar manejadores de comandos
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("assets", assets))
-    application.add_handler(CommandHandler("daily", daily))
-    application.add_handler(CommandHandler("weekly", weekly))
-
-    # Ejecutar el bot en el mismo bucle de eventos principal
-    print("El bot está en funcionamiento...")
-    application.run_polling()
-
-
+# Iniciar el servidor
 if __name__ == "__main__":
-    # Ejecutar FastAPI y Telegram en el mismo proceso
-    from multiprocessing import Process
+    import uvicorn
 
-    # Ejecutar el bot en un proceso separado
-    bot_process = Process(target=main)
-    bot_process.start()
-
-    # Ejecutar FastAPI
     host = os.getenv("HOST", "127.0.0.1")
-    port = int(os.getenv("PORT", 8040))
+    port = int(os.getenv("PORT", 8032))
+
+
+
+    print(f"🚀 Servidor iniciado en: http://{host}:{port}")
     uvicorn.run(app, host=host, port=port)
 
-    # Esperar al proceso del bot
-    bot_process.join()
+
+
+
+
+
