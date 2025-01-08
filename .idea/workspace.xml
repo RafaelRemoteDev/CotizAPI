@@ -4,17 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="weekly / daily">
-      <change afterPath="$PROJECT_DIR$/tasks/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/send_alerts.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/update_prices.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/cotizAPI.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cotizAPI.iml" afterDir="false" />
+    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="webhook">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cotizapi.db" beforeDir="false" afterPath="$PROJECT_DIR$/cotizapi.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/managers/assets_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/managers/assets_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/managers/notifications_manager.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -282,7 +273,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736020130507</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="webhook">
+      <option name="closed" value="true" />
+      <created>1736359736629</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1736359736629</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -292,6 +291,7 @@
     <MESSAGE value="webhook + conexion a railway" />
     <MESSAGE value="Telegram conection" />
     <MESSAGE value="weekly / daily" />
-    <option name="LAST_COMMIT_MESSAGE" value="weekly / daily" />
+    <MESSAGE value="webhook" />
+    <option name="LAST_COMMIT_MESSAGE" value="webhook" />
   </component>
 </project>
