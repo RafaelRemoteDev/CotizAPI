@@ -43,28 +43,11 @@ def actualizar_precio_en_bd(simbolo):
     precio = obtener_precio_actual(simbolo)  # Llama al servicio de Yahoo Finance
     if precio:
         fecha = datetime.now().strftime('%Y-%m-%d')
-        insertar_precio(simbolo, precio, fecha)  # Usa la función insertar_precio
+        insertar_precio(simbolo, precio, fecha)
         return precio
     else:
         print(f"No se pudo obtener el precio para {simbolo}.")
         return None
-
-# Obtener precios externos sin insertarlos (fetch de datos externos)
-def fetch_external_prices():
-    """
-    Obtiene precios de activos desde una fuente externa (como Yahoo Finance).
-    Devuelve un diccionario con los símbolos como claves y los precios como valores.
-    """
-    activos = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]  # Oro, Plata, Bitcoin, Trigo, Petróleo
-    precios = {}
-    for simbolo in activos:
-        precio = obtener_precio_actual(simbolo)
-        if precio:
-            precios[simbolo] = precio
-        else:
-            print(f"Error al obtener precio para {simbolo}")
-            precios[simbolo] = None
-    return precios  # Devuelve un diccionario con los precios obtenidos
 
 # Actualizar todos los precios de los activos en la base de datos
 def actualizar_todos_los_precios():
@@ -77,4 +60,5 @@ def actualizar_todos_los_precios():
             print(f"Actualizado: {simbolo} - Precio: {precio}")
         else:
             print(f"Error al actualizar {simbolo}.")
-    return precios_actualizados  # Devuelve un diccionario con los precios actualizados
+    return precios_actualizados
+

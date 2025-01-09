@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="webhook">
+    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="post-webhook">
+      <change afterPath="$PROJECT_DIR$/managers/alerts_managers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/managers/assets_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/managers/assets_manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -289,7 +290,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736361447794</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="post-webhook">
+      <option name="closed" value="true" />
+      <created>1736412442997</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1736412442997</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -300,6 +309,7 @@
     <MESSAGE value="Telegram conection" />
     <MESSAGE value="weekly / daily" />
     <MESSAGE value="webhook" />
-    <option name="LAST_COMMIT_MESSAGE" value="webhook" />
+    <MESSAGE value="post-webhook" />
+    <option name="LAST_COMMIT_MESSAGE" value="post-webhook" />
   </component>
 </project>
