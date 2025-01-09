@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="webhook">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,19 +44,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.actualizar_precios.executor": "Run",
-    "Python.assets.executor": "Run",
-    "Python.generar_alertas.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.models.executor": "Run",
-    "Python.tablas.executor": "Run",
-    "Python.verify_db.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.actualizar_precios.executor&quot;: &quot;Run&quot;,
+    &quot;Python.assets.executor&quot;: &quot;Run&quot;,
+    &quot;Python.generar_alertas.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.models.executor&quot;: &quot;Run&quot;,
+    &quot;Python.tablas.executor&quot;: &quot;Run&quot;,
+    &quot;Python.verify_db.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Usuario\PycharmProjects\cotizAPI" />
@@ -281,7 +281,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736359736629</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="webhook">
+      <option name="closed" value="true" />
+      <created>1736361447794</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1736361447794</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
