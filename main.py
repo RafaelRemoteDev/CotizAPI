@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta
 
+import uvicorn
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
@@ -10,10 +11,21 @@ from managers.assets_manager import (
     actualizar_todos_los_precios,
     get_connection, obtener_precio_por_fecha
 )
+from fastapi import FastAPI
+from api.endpoints import router as start_router
+from api.endpoints import router as assets_router
+from api.endpoints import router as daily_router
+from api.endpoints import router as weekly_router
+from api.endpoints import router as alerts_router
 
 # Cargar variables de entorno
 load_dotenv()
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+
+app = FastAPI()
+@app.get("/")
+def read_root():
+    return {"¡CotizAPI está funcionando correctamente!  🤖💸🐂"}
 
 if not TELEGRAM_BOT_TOKEN:
     raise ValueError("El TOKEN del bot de Telegram no está configurado correctamente en el archivo .env")
@@ -181,9 +193,15 @@ def main():
     application.add_handler(CommandHandler("weekly", weekly))
     application.add_handler(CommandHandler("alerts", alertas))  # Nuevo comando
 
+
     print("El bot está en funcionamiento...")
     application.run_polling()
 
+app.include_router(start_router, prefix="")
+app.include_router(assets_router, prefix="")
+app.include_router(daily_router, prefix="")
+app.include_router(weekly_router, prefix="")
+app.include_router(alerts_router, prefix="")
 
 
 if __name__ == "__main__":
@@ -191,6 +209,11 @@ if __name__ == "__main__":
     print("⏳ Inicializando y actualizando precios de los activos en la base de datos...")
     actualizar_todos_los_precios()
     print("✅ Precios iniciales actualizados.")
-
+    uvicorn.run(
+        "main:app",
+        host="127.0.0.1",
+        port=8032)
     # Iniciar el bot
     main()
+
+
