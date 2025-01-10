@@ -6,4 +6,3 @@ router = APIRouter()
 def get_assets():
     return {"assets": ["Gold", "Silver", "Bitcoin", "Wheat", "Oil"]}
 
-

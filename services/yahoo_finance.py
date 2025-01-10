@@ -12,3 +12,4 @@ def obtener_precio_actual(simbolo):
     except Exception as e:
         print(f"Error al obtener el precio de {simbolo}: {e}")
         return None
+    

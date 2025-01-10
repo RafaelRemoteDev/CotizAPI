@@ -16,4 +16,3 @@ def create_tables():
     ''')
     conn.commit()
 
-

@@ -1,44 +1,89 @@
-from db.database import get_connection
-from datetime import datetime, timedelta
-from managers.assets_manager import obtener_precio_reciente, obtener_precio_por_fecha
+import sqlite3
+from datetime import datetime
+from managers.assets_manager import get_connection
 
-# Insertar una alerta en la base de datos
-def insertar_alerta(mensaje):
+# Ruta de la base de datos
+DB_PATH = "cotizapi.db"
+
+def get_connection():
+    return sqlite3.connect(DB_PATH)
+
+def obtener_precio_reciente(simbolo):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO alertas (mensaje, fecha)
-        VALUES (?, ?)
-    ''', (mensaje, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        SELECT precio, fecha FROM activos
+        WHERE simbolo = ?
+        ORDER BY fecha DESC LIMIT 1
+    ''', (simbolo.upper(),))
+    resultado = cursor.fetchone()
+    conn.close()
+    return resultado
+
+def obtener_precio_por_fecha(simbolo, fecha):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT precio FROM activos
+        WHERE simbolo = ? AND fecha = ?
+    ''', (simbolo.upper(), fecha))
+    resultado = cursor.fetchone()
+    conn.close()
+    return resultado[0] if resultado else None
+
+
+
+# Insertar una alerta en la tabla 'alertas'
+def insertar_alerta(simbolo, fecha, mensaje):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        INSERT INTO alertas (simbolo, fecha, mensaje)
+        VALUES (?, ?, ?)
+    ''', (simbolo.upper(), fecha, mensaje))
+
     conn.commit()
     conn.close()
 
-# Generar alertas basadas en variaciones significativas de precios
+
+# Generar alertas en función de las variaciones
 def generar_alertas():
-    activos = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]  # Oro, Plata, Bitcoin, Trigo, Petróleo
-    for simbolo in activos:
-        precio_actual = obtener_precio_reciente(simbolo)
-        if precio_actual:
-            fecha_ayer = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
-            precio_ayer = obtener_precio_por_fecha(simbolo, fecha_ayer)
+    conn = get_connection()
+    cursor = conn.cursor()
 
-            if precio_ayer:
-                variacion_diaria = ((precio_actual[0] - precio_ayer) / precio_ayer) * 100
-                if abs(variacion_diaria) > 5:  # Umbral de variación significativa diaria
-                    mensaje = f"{simbolo}: Variación diaria significativa del {variacion_diaria:.2f}% respecto a ayer."
-                    insertar_alerta(mensaje)
+    # Consultar activos con variaciones significativas
+    cursor.execute('''
+        SELECT simbolo, fecha, variacion_diaria, variacion_semanal
+        FROM activos
+        WHERE variacion_diaria > 5 OR variacion_semanal > 10
+    ''')
+    resultados = cursor.fetchall()
+    conn.close()
 
-            fecha_semana_pasada = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
-            precio_semana_pasada = obtener_precio_por_fecha(simbolo, fecha_semana_pasada)
+    for simbolo, fecha, variacion_diaria, variacion_semanal in resultados:
+        mensaje = f"¡Alerta! {simbolo} ha tenido una variación "
+        if variacion_diaria and variacion_diaria > 5:
+            mensaje += f"diaria de {variacion_diaria:.2f}%. "
+        if variacion_semanal and variacion_semanal > 10:
+            mensaje += f"semanal de {variacion_semanal:.2f}%."
 
-            if precio_semana_pasada:
-                variacion_semanal = ((precio_actual[0] - precio_semana_pasada) / precio_semana_pasada) * 100
-                if abs(variacion_semanal) > 10:  # Umbral de variación significativa semanal
-                    mensaje = f"{simbolo}: Variación semanal significativa del {variacion_semanal:.2f}%."
-                    insertar_alerta(mensaje)
+        insertar_alerta(simbolo, fecha, mensaje)
+        print(f"Alerta generada para {simbolo}: {mensaje}")
 
-# Generar alertas diarias y semanales en un único flujo
-def generar_alertas_diarias_y_semanales():
-    print("[INFO] Generando alertas...")
-    generar_alertas()
-    print("[INFO] Alertas generadas correctamente.")
+
+# Obtener alertas recientes (últimas 24 horas)
+def obtener_alertas_recientes():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        SELECT simbolo, fecha, mensaje
+        FROM alertas
+        WHERE fecha >= datetime('now', '-1 day')
+    ''')
+    alertas = cursor.fetchall()
+    conn.close()
+    return alertas
+
+
