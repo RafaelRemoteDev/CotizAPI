@@ -1,5 +1,8 @@
 import sqlite3
 from datetime import datetime
+
+import timedelta
+
 from managers.assets_manager import get_connection
 
 # Ruta de la base de datos
@@ -48,29 +51,38 @@ def insertar_alerta(simbolo, fecha, mensaje):
 
 
 # Generar alertas en función de las variaciones
+from datetime import datetime, timedelta
+
 def generar_alertas():
-    conn = get_connection()
-    cursor = conn.cursor()
+    activos = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]
+    fecha_actual = datetime.now().strftime('%Y-%m-%d')
 
-    # Consultar activos con variaciones significativas
-    cursor.execute('''
-        SELECT simbolo, fecha, variacion_diaria, variacion_semanal
-        FROM activos
-        WHERE variacion_diaria > 5 OR variacion_semanal > 10
-    ''')
-    resultados = cursor.fetchall()
-    conn.close()
+    for simbolo in activos:
+        # Obtener precios recientes y de fechas específicas
+        precio_reciente = obtener_precio_reciente(simbolo)
+        if not precio_reciente:
+            continue
 
-    for simbolo, fecha, variacion_diaria, variacion_semanal in resultados:
-        mensaje = f"¡Alerta! {simbolo} ha tenido una variación "
-        if variacion_diaria and variacion_diaria > 5:
-            mensaje += f"diaria de {variacion_diaria:.2f}%. "
-        if variacion_semanal and variacion_semanal > 10:
-            mensaje += f"semanal de {variacion_semanal:.2f}%."
+        precio_hace_un_dia = obtener_precio_por_fecha(simbolo, (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'))
+        precio_hace_una_semana = obtener_precio_por_fecha(simbolo, (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d'))
 
-        insertar_alerta(simbolo, fecha, mensaje)
-        print(f"Alerta generada para {simbolo}: {mensaje}")
+        mensaje = ""
+        # Calcular variación diaria
+        if precio_hace_un_dia:
+            variacion_diaria = ((precio_reciente[0] - precio_hace_un_dia) / precio_hace_un_dia) * 100
+            if abs(variacion_diaria) > 3:  # Umbral de alerta diaria
+                mensaje += f"Variación diaria de {variacion_diaria:.2f}%. "
 
+        # Calcular variación semanal
+        if precio_hace_una_semana:
+            variacion_semanal = ((precio_reciente[0] - precio_hace_una_semana) / precio_hace_una_semana) * 100
+            if abs(variacion_semanal) > 6:  # Umbral de alerta semanal
+                mensaje += f"Variación semanal de {variacion_semanal:.2f}%. "
+
+        # Generar alerta si hay mensaje
+        if mensaje:
+            insertar_alerta(simbolo, fecha_actual, f"¡Alerta! {mensaje}")
+            print(f"Alerta generada para {simbolo}: {mensaje}")
 
 # Obtener alertas recientes (últimas 24 horas)
 def obtener_alertas_recientes():
