@@ -150,7 +150,8 @@ async def alerts(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("✅ No se han registrado alertas en las últimas 24 horas.")
         return
 
-    mensajes = [f"🔔 {mensaje} (Fecha: {fecha})" for simbolo, fecha, mensaje in alertas]
+    # Incluir el símbolo del activo en cada mensaje
+    mensajes = [f"🔔 ¡Alerta para {simbolo}! {mensaje} (Fecha: {fecha})" for simbolo, fecha, mensaje in alertas]
     await update.message.reply_text("\n".join(mensajes), parse_mode="HTML")
 
 
