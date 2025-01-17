@@ -1,9 +1,8 @@
 import os
 from datetime import datetime, timedelta
-
 from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import Application, CommandHandler, CallbackContext
 
 from managers.alerts_managers import obtener_alertas_recientes, generar_alertas
 from managers.assets_manager import obtener_precio_actual, get_connection, obtener_precio_por_fecha
@@ -15,8 +14,9 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 if not TELEGRAM_BOT_TOKEN:
     raise ValueError("El TOKEN del bot de Telegram no está configurado correctamente en el archivo .env")
 
+
 # Comandos del bot
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start(update: Update, context: CallbackContext):
     """
     Muestra un mensaje de bienvenida y los comandos disponibles al usuario.
     """
@@ -30,7 +30,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/alerts - Ver las alertas generadas en las últimas 24 horas.\n"
     )
 
-async def assets(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def assets(update: Update, context: CallbackContext):
     """
     Muestra los precios actuales de los activos.
     """
@@ -47,7 +48,8 @@ async def assets(update: Update, context: ContextTypes.DEFAULT_TYPE):
         mensajes.append(f"{nombre}: {precio:.2f} USD" if precio else f"{nombre}: No se pudo obtener el precio.")
     await update.message.reply_text("\n".join(mensajes))
 
-async def update_prices(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def update_prices(update: Update, context: CallbackContext):
     """
     Comando para actualizar los precios de los activos y generar alertas.
     """
@@ -64,9 +66,9 @@ async def update_prices(update: Update, context: ContextTypes.DEFAULT_TYPE):
         precio = obtener_precio_actual(simbolo)
         if precio:
             conn = get_connection()
-            cursor = conn.cursor()
-            fecha = datetime.now().strftime('%Y-%m-%d')
             try:
+                cursor = conn.cursor()
+                fecha = datetime.now().strftime('%Y-%m-%d')
                 # Inserción condicional para evitar conflictos
                 cursor.execute('''
                     INSERT INTO activos (simbolo, fecha, precio)
@@ -85,11 +87,10 @@ async def update_prices(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Generar alertas después de actualizar los precios
     generar_alertas()
-
     await update.message.reply_text("✅ Precios actualizados y alertas generadas.")
 
 
-async def daily(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def daily(update: Update, context: CallbackContext):
     """
     Muestra la variación diaria de los precios de los activos.
     """
@@ -115,7 +116,8 @@ async def daily(update: Update, context: ContextTypes.DEFAULT_TYPE):
             mensajes.append(f"{nombre}: No se pudo obtener el precio actual.")
     await update.message.reply_text("\n".join(mensajes))
 
-async def weekly(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def weekly(update: Update, context: CallbackContext):
     """
     Muestra la variación semanal de los precios de los activos.
     """
@@ -141,7 +143,8 @@ async def weekly(update: Update, context: ContextTypes.DEFAULT_TYPE):
             mensajes.append(f"{nombre}: No se pudo obtener el precio actual.")
     await update.message.reply_text("\n".join(mensajes))
 
-async def alerts(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def alerts(update: Update, context: CallbackContext):
     """
     Comando para mostrar las alertas recientes (últimas 24 horas).
     """
@@ -150,7 +153,6 @@ async def alerts(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("✅ No se han registrado alertas en las últimas 24 horas.")
         return
 
-    # Incluir el símbolo del activo en cada mensaje
     mensajes = [f"🔔 ¡Alerta para {simbolo}! {mensaje} (Fecha: {fecha})" for simbolo, fecha, mensaje in alertas]
     await update.message.reply_text("\n".join(mensajes), parse_mode="HTML")
 
