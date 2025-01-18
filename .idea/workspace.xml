@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="LAST VERSION">
+    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="readme">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/managers/alerts_managers.py" beforeDir="false" afterPath="$PROJECT_DIR$/managers/alerts_managers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -368,7 +369,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737108606307</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="readme">
+      <option name="closed" value="true" />
+      <created>1737110103530</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1737110103530</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -387,7 +396,8 @@
     <MESSAGE value="tests" />
     <MESSAGE value="tests + vercel" />
     <MESSAGE value="LAST VERSION" />
-    <option name="LAST_COMMIT_MESSAGE" value="LAST VERSION" />
+    <MESSAGE value="readme" />
+    <option name="LAST_COMMIT_MESSAGE" value="readme" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
