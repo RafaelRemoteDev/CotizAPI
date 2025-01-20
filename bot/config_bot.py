@@ -103,19 +103,39 @@ async def daily(update: Update, context: CallbackContext):
     }
     mensajes = []
     for simbolo, nombre in activos.items():
-        precio_actual = obtener_precio_actual(simbolo)
-        if precio_actual:
-            fecha_ayer = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
-            precio_ayer = obtener_precio_por_fecha(simbolo, fecha_ayer)
-            if precio_ayer:
-                variacion = ((precio_actual - precio_ayer) / precio_ayer) * 100
-                mensajes.append(f"{nombre}: Variación diaria {variacion:.2f}%")
-            else:
-                mensajes.append(f"{nombre}: No hay datos para el día anterior.")
-        else:
-            mensajes.append(f"{nombre}: No se pudo obtener el precio actual.")
-    await update.message.reply_text("\n".join(mensajes))
+        try:
+            precio_actual = obtener_precio_actual(simbolo)
+            if precio_actual:
+                fecha_ayer = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+                precio_ayer = obtener_precio_por_fecha(simbolo, fecha_ayer)
 
+                # Buscar el último registro si no hay datos del día anterior
+                if not precio_ayer:
+                    conn = get_connection()
+                    cursor = conn.cursor()
+                    cursor.execute(
+                        "SELECT precio, fecha FROM activos WHERE simbolo = ? ORDER BY fecha DESC LIMIT 1",
+                        (simbolo.upper(),)
+                    )
+                    resultado = cursor.fetchone()
+                    conn.close()
+
+                    if resultado:
+                        precio_ayer, fecha_ayer = resultado
+                        print(f"Usando el último precio registrado para {nombre}: {precio_ayer} ({fecha_ayer})")
+
+                if precio_ayer:
+                    variacion = ((precio_actual - precio_ayer) / precio_ayer) * 100
+                    mensajes.append(f"{nombre}: Variación diaria {variacion:.2f}%")
+                else:
+                    mensajes.append(f"{nombre}: No hay datos suficientes para calcular la variación.")
+            else:
+                mensajes.append(f"{nombre}: No se pudo obtener el precio actual.")
+        except Exception as e:
+            print(f"Error al procesar {nombre} ({simbolo}): {e}")
+            mensajes.append(f"{nombre}: Ocurrió un error al calcular la variación.")
+
+    await update.message.reply_text("\n".join(mensajes))
 
 async def weekly(update: Update, context: CallbackContext):
     """

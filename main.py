@@ -1,3 +1,5 @@
+import warnings
+
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -31,5 +33,6 @@ if __name__ == "__main__":
     print("⏳ Inicializando y actualizando precios de los activos en la base de datos...")
     actualizar_todos_los_precios()
     print("✅ Precios iniciales actualizados.")
+    warnings.filterwarnings("ignore", category=FutureWarning)
     bot_main()
     uvicorn.run("main:app", host="127.0.0.1", port=8032)

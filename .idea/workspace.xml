@@ -4,10 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="readme">
+    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="limpia de env y req para vercel">
+      <change afterPath="$PROJECT_DIR$/tests/wheat_upload_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/managers/alerts_managers.py" beforeDir="false" afterPath="$PROJECT_DIR$/managers/alerts_managers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/config_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/config_bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cotizapi.db" beforeDir="false" afterPath="$PROJECT_DIR$/cotizapi.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/yahoo_finance.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/yahoo_finance.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,23 +48,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python tests.Python tests for asset_price_connection.TestAssetPrice.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for connection_test.TestAPIConnection.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in asset_price_connection.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python.actualizar_precios.executor&quot;: &quot;Run&quot;,
-    &quot;Python.assets.executor&quot;: &quot;Run&quot;,
-    &quot;Python.assets_manager.executor&quot;: &quot;Run&quot;,
-    &quot;Python.generar_alertas.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.models.executor&quot;: &quot;Run&quot;,
-    &quot;Python.tablas.executor&quot;: &quot;Run&quot;,
-    &quot;Python.verify_db.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python tests.Python tests for asset_price_connection.TestAssetPrice.executor": "Run",
+    "Python tests.Python tests for connection_test.TestAPIConnection.executor": "Run",
+    "Python tests.Python tests in asset_price_connection.py.executor": "Run",
+    "Python.actualizar_precios.executor": "Run",
+    "Python.assets.executor": "Run",
+    "Python.assets_manager.executor": "Run",
+    "Python.generar_alertas.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.models.executor": "Run",
+    "Python.tablas.executor": "Run",
+    "Python.verify_db.executor": "Run",
+    "Python.wheat_upload_test.executor": "Run",
+    "Python.yahoo_finance.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Usuario\PycharmProjects\cotizAPI\static" />
@@ -70,28 +75,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.main">
-    <configuration name="assets_manager" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="cotizAPI" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/managers" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/managers/assets_manager.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="cotizAPI" />
       <option name="ENV_FILES" value="" />
@@ -106,6 +89,50 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="wheat_upload_test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="cotizAPI" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/wheat_upload_test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="yahoo_finance" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="cotizAPI" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/services" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/services/yahoo_finance.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -129,21 +156,6 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for connection_test.TestAPIConnection" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="cotizAPI" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;connection_test.TestAPIConnection&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <configuration name="Python tests in asset_price_connection.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="cotizAPI" />
       <option name="ENV_FILES" value="" />
@@ -162,10 +174,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.wheat_upload_test" />
+        <item itemvalue="Python.yahoo_finance" />
         <item itemvalue="Python tests.Python tests in asset_price_connection.py" />
         <item itemvalue="Python tests.Python tests for asset_price_connection.TestAssetPrice" />
-        <item itemvalue="Python tests.Python tests for connection_test.TestAPIConnection" />
-        <item itemvalue="Python.assets_manager" />
       </list>
     </recent_temporary>
   </component>
@@ -377,7 +389,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737110103530</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="limpia de env y req para vercel">
+      <option name="closed" value="true" />
+      <created>1737229165311</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1737229165312</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -397,7 +417,8 @@
     <MESSAGE value="tests + vercel" />
     <MESSAGE value="LAST VERSION" />
     <MESSAGE value="readme" />
-    <option name="LAST_COMMIT_MESSAGE" value="readme" />
+    <MESSAGE value="limpia de env y req para vercel" />
+    <option name="LAST_COMMIT_MESSAGE" value="limpia de env y req para vercel" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
