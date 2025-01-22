@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="limpia de env y req para vercel">
-      <change afterPath="$PROJECT_DIR$/tests/wheat_upload_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/config_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/config_bot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cotizapi.db" beforeDir="false" afterPath="$PROJECT_DIR$/cotizapi.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/yahoo_finance.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/yahoo_finance.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +35,9 @@
     &quot;accountId&quot;: &quot;d5ec6b53-398d-4305-8762-347c49479de8&quot;
   }
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -48,25 +47,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python tests.Python tests for asset_price_connection.TestAssetPrice.executor": "Run",
-    "Python tests.Python tests for connection_test.TestAPIConnection.executor": "Run",
-    "Python tests.Python tests in asset_price_connection.py.executor": "Run",
-    "Python.actualizar_precios.executor": "Run",
-    "Python.assets.executor": "Run",
-    "Python.assets_manager.executor": "Run",
-    "Python.generar_alertas.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.models.executor": "Run",
-    "Python.tablas.executor": "Run",
-    "Python.verify_db.executor": "Run",
-    "Python.wheat_upload_test.executor": "Run",
-    "Python.yahoo_finance.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python tests.Python tests for asset_price_connection.TestAssetPrice.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for connection_test.TestAPIConnection.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in asset_price_connection.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.actualizar_precios.executor&quot;: &quot;Run&quot;,
+    &quot;Python.assets.executor&quot;: &quot;Run&quot;,
+    &quot;Python.assets_manager.executor&quot;: &quot;Run&quot;,
+    &quot;Python.generar_alertas.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.models.executor&quot;: &quot;Run&quot;,
+    &quot;Python.tablas.executor&quot;: &quot;Run&quot;,
+    &quot;Python.verify_db.executor&quot;: &quot;Run&quot;,
+    &quot;Python.wheat_upload_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.yahoo_finance.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Usuario\PycharmProjects\cotizAPI\static" />
@@ -397,7 +396,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737229165312</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="limpia de env y req para vercel">
+      <option name="closed" value="true" />
+      <created>1737399028847</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1737399028847</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
