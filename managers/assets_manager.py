@@ -152,3 +152,5 @@ def obtener_precio_por_fecha(simbolo, fecha):
         conn.close()
 
 
+
+

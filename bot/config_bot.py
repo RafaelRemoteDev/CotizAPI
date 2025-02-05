@@ -150,18 +150,36 @@ async def weekly(update: Update, context: CallbackContext):
     }
     mensajes = []
     for simbolo, nombre in activos.items():
-        precio_actual = obtener_precio_actual(simbolo)
-        if precio_actual:
-            fecha_hace_una_semana = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
-            precio_semana_pasada = obtener_precio_por_fecha(simbolo, fecha_hace_una_semana)
-            if precio_semana_pasada:
-                variacion = ((precio_actual - precio_semana_pasada) / precio_semana_pasada) * 100
-                mensajes.append(f"{nombre}: Variación semanal {variacion:.2f}%")
+        try:
+            # Obtener el precio actual del activo
+            precio_actual = obtener_precio_actual(simbolo)
+            if precio_actual:
+                precio_referencia = None
+                fecha_referencia = None
+
+                # Intentar obtener precios de hace 7, 8 o 9 días
+                for dias in [7, 8, 9]:
+                    fecha = (datetime.now() - timedelta(days=dias)).strftime('%Y-%m-%d')
+                    precio_referencia = obtener_precio_por_fecha(simbolo, fecha)
+                    if precio_referencia:
+                        fecha_referencia = fecha
+                        break
+
+                # Calcular la variación si se encuentra un precio de referencia
+                if precio_referencia:
+                    variacion = ((precio_actual - precio_referencia) / precio_referencia) * 100
+                    mensajes.append(f"{nombre}: Variación semanal {variacion:.2f}% (Basado en datos de {fecha_referencia})")
+                else:
+                    mensajes.append(f"{nombre}: No hay datos suficientes para calcular la variación semanal.")
             else:
-                mensajes.append(f"{nombre}: No hay datos para hace 7 días.")
-        else:
-            mensajes.append(f"{nombre}: No se pudo obtener el precio actual.")
+                mensajes.append(f"{nombre}: No se pudo obtener el precio actual.")
+        except Exception as e:
+            print(f"Error al procesar {nombre} ({simbolo}): {e}")
+            mensajes.append(f"{nombre}: Ocurrió un error al calcular la variación semanal.")
+
+    # Enviar los mensajes al usuario
     await update.message.reply_text("\n".join(mensajes))
+
 
 
 async def alerts(update: Update, context: CallbackContext):

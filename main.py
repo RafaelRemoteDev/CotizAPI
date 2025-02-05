@@ -1,5 +1,3 @@
-import warnings
-
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -11,6 +9,7 @@ from api.endpoints import router as start_router
 from api.endpoints import router as weekly_router
 from bot.config_bot import main as bot_main
 from managers.assets_manager import actualizar_todos_los_precios
+from managers.assets_manager import inicializar_base_de_datos
 
 # Cargar variables de entorno
 load_dotenv()
@@ -30,9 +29,9 @@ app.include_router(weekly_router, prefix="")
 app.include_router(alerts_router, prefix="")
 
 if __name__ == "__main__":
+    inicializar_base_de_datos()
     print("⏳ Inicializando y actualizando precios de los activos en la base de datos...")
     actualizar_todos_los_precios()
     print("✅ Precios iniciales actualizados.")
-    warnings.filterwarnings("ignore", category=FutureWarning)
     bot_main()
     uvicorn.run("main:app", host="127.0.0.1", port=8032)
