@@ -4,17 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="renovacion requeriments">
+    <list default="true" id="d8faa451-f454-4fa2-918a-c06f98e6a183" name="Changes" comment="últimos retoques">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/config_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/config_bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cotizapi.db" beforeDir="false" afterPath="$PROJECT_DIR$/cotizapi.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/cotizapi.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/db/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/managers/assets_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/managers/assets_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/connection_test.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -436,7 +427,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737538853129</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="últimos retoques">
+      <option name="closed" value="true" />
+      <created>1738777984854</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1738777984854</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -458,7 +457,8 @@
     <MESSAGE value="readme" />
     <MESSAGE value="limpia de env y req para vercel" />
     <MESSAGE value="renovacion requeriments" />
-    <option name="LAST_COMMIT_MESSAGE" value="renovacion requeriments" />
+    <MESSAGE value="últimos retoques" />
+    <option name="LAST_COMMIT_MESSAGE" value="últimos retoques" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
