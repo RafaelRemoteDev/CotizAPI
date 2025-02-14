@@ -26,7 +26,7 @@ class Asset(Base):
     date = Column(Date, nullable=False)
     price = Column(Float, nullable=False)
 
-    __table_args__ = (UniqueConstraint('symbol', 'date', name='uix_symbol_date'),)  # ✅ Unique constraint
+    __table_args__ = (UniqueConstraint('symbol', 'date', name='uix_symbol_date'),)
 
 
 # **Alerts Table**

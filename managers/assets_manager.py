@@ -110,24 +110,25 @@ def calculate_variations(assets: List[str], days: int) -> List[dict]:
 
 def update_all_prices() -> None:
     """
-    Updates the prices of all predefined assets and stores them in the database.
+    Updates asset prices and stores them in the database.
     """
-    assets: List[str] = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]
+    assets = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]
     db: Session = SessionLocal()
 
     try:
-        for symbol in assets:
-            price: Optional[float] = get_current_price(symbol)
-            if price is not None:
-                date: str = datetime.now().strftime('%Y-%m-%d')
-                insert_price(db, symbol, price, date)
-                print(f"🔄 Updated: {symbol} - {price:.2f} USD")
-            else:
-                print(f"⚠ Warning: No price available for {symbol}")
+        updated_prices = [(symbol, price) for symbol in assets if (price := get_current_price(symbol)) is not None]
+
+        for symbol, price in updated_prices:
+            date = datetime.now().strftime('%Y-%m-%d')
+            insert_price(db, symbol, price, date)
+            print(f"🔄 Updated: {symbol} - {price:.2f} USD")
+
     except Exception as e:
         print(f"⚠ Error updating prices: {e}")
     finally:
         db.close()
+
+
 
 
 
