@@ -1,155 +1,137 @@
 import yfinance as yf
-from datetime import datetime
-import sqlite3
+from datetime import datetime, timedelta
+from sqlalchemy.orm import Session
+from db.database import SessionLocal, Asset
+from typing import Generator, Optional, List
+from sqlalchemy import text
 
-# Ruta de la base de datos
-DB_PATH = "cotizapi.db"
 
-
-def inicializar_base_de_datos():
+def get_db() -> Generator[Session, None, None]:
     """
-    Crea la tabla 'activos' en la base de datos si no existe.
+    Provides a database session.
     """
+    db = SessionLocal()
     try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS activos (
-                simbolo TEXT NOT NULL,
-                fecha TEXT NOT NULL,
-                precio REAL NOT NULL,
-                PRIMARY KEY (simbolo, fecha)
-            )
-        ''')
-        conn.commit()
-    except Exception as e:
-        print(f"Error al inicializar la base de datos: {e}")
+        yield db
     finally:
-        conn.close()
+        db.close()
 
 
-def inicializar_modo_wal():
+def get_current_price(symbol: str) -> float:
     """
-    Activa el modo WAL (Write-Ahead Logging) para mejorar la concurrencia en la base de datos.
-    """
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute('PRAGMA journal_mode=WAL;')
-        conn.commit()
-    except Exception as e:
-        print(f"Error al activar el modo WAL: {e}")
-    finally:
-        conn.close()
-
-
-def get_connection():
-    """
-    Obtiene una conexión a la base de datos.
+    Retrieve the latest price of an asset.
     """
     try:
-        return sqlite3.connect(DB_PATH)
-    except Exception as e:
-        print(f"Error al conectar con la base de datos: {e}")
-        raise
+        with SessionLocal() as db:
+            query = text("SELECT price FROM assets WHERE symbol = :symbol ORDER BY date DESC LIMIT 1")
+            result = db.execute(query, {"symbol": symbol}).fetchone()
 
+            if result is None or result[0] is None:
+                print(f"⚠ Warning: No price data found for {symbol}")
+                return None
 
-def obtener_precio_actual(simbolo):
-    """
-    Obtiene el precio actual de un activo desde Yahoo Finance.
-    :param simbolo: Símbolo del activo (ej: "GC=F").
-    :return: Precio actual del activo o None si ocurre un error.
-    """
-    try:
-        ticker = yf.Ticker(simbolo)
-        precio = ticker.history(period="1d")["Close"].iloc[-1]  # Precio de cierre más reciente
-        return precio
+            return float(result[0])
     except Exception as e:
-        print(f"Error al obtener el precio de {simbolo}: {e}")
+        print(f"⚠ Error retrieving price for {symbol}: {e}")
         return None
 
 
-def insertar_precio(simbolo, precio, fecha):
+def insert_price(db: Session, symbol: str, price: float, date: str) -> None:
     """
-    Inserta el precio de un activo en la base de datos o actualiza si ya existe.
-    :param simbolo: Símbolo del activo.
-    :param precio: Precio del activo.
-    :param fecha: Fecha en formato 'YYYY-MM-DD'.
-    """
-    if precio is None or precio <= 0:
-        print(f"Precio no válido para {simbolo}: {precio}")
-        return
-
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute('''
-            INSERT INTO activos (simbolo, fecha, precio)
-            VALUES (?, ?, ?)
-            ON CONFLICT(simbolo, fecha) DO UPDATE SET
-                precio = excluded.precio
-        ''', (simbolo.upper(), fecha, precio))
-        conn.commit()
-        print(f"Insertado/Actualizado: {simbolo} - Precio: {precio:.2f} - Fecha: {fecha}")
-    except Exception as e:
-        print(f"Error al insertar/actualizar el precio para {simbolo}: {e}")
-    finally:
-        conn.close()
-
-
-
-def actualizar_precio_en_bd(simbolo):
-    """
-    Obtiene y actualiza el precio de un activo en la base de datos.
-    :param simbolo: Símbolo del activo (ej: "GC=F").
-    """
-    precio = obtener_precio_actual(simbolo)
-    if precio:
-        fecha = datetime.now().strftime('%Y-%m-%d')
-        insertar_precio(simbolo, precio, fecha)
-        print(f"Actualizado: {simbolo} - Precio: {precio:.2f}")
-    else:
-        print(f"No se pudo obtener el precio para {simbolo}.")
-
-
-def actualizar_todos_los_precios():
-    """
-    Actualiza los precios de todos los activos definidos.
-    """
-    activos = {
-        "GC=F": "Oro 🥇",
-        "SI=F": "Plata 🥈",
-        "BTC-USD": "Bitcoin ₿",
-        "ZW=F": "Trigo 🌾",
-        "CL=F": "Petróleo 🛢️",
-    }
-
-    for simbolo, nombre in activos.items():
-        print(f"Actualizando precio para {nombre} ({simbolo})...")
-        actualizar_precio_en_bd(simbolo)
-
-
-def obtener_precio_por_fecha(simbolo, fecha):
-    """
-    Obtiene el precio de un activo para una fecha específica desde la base de datos.
-    :param simbolo: Símbolo del activo.
-    :param fecha: Fecha en formato 'YYYY-MM-DD'.
-    :return: Precio del activo en esa fecha o None si no existe.
+    Inserts or updates the price of an asset in the database.
     """
     try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            "SELECT precio FROM activos WHERE simbolo = ? AND fecha = ?",
-            (simbolo.upper(), fecha),
-        )
-        resultado = cursor.fetchone()
-        return resultado[0] if resultado else None
+        # Try to update if the price already exists
+        query_update = text("""
+            UPDATE assets 
+            SET price = :price 
+            WHERE symbol = :symbol AND date = :date
+        """)
+        result = db.execute(query_update, {"symbol": symbol.upper(), "date": date, "price": price})
+        db.commit()
+
+        # If no rows were updated, insert a new record
+        if result.rowcount == 0:
+            query_insert = text("""
+                INSERT INTO assets (symbol, date, price) 
+                VALUES (:symbol, :date, :price)
+            """)
+            db.execute(query_insert, {"symbol": symbol.upper(), "date": date, "price": price})
+            db.commit()
+
     except Exception as e:
-        print(f"Error al obtener el precio para {simbolo} en la fecha {fecha}: {e}")
+        print(f"⚠ Error inserting/updating price for {symbol} on {date}: {e}")
+        db.rollback()
+
+
+def get_price_by_date(db: Session, symbol: str, date: str) -> Optional[float]:
+    """
+    Retrieves the price of an asset for a specific date.
+    """
+    try:
+        query = text("""
+            SELECT price FROM assets 
+            WHERE symbol = :symbol AND date <= :date
+            ORDER BY date DESC 
+            LIMIT 1
+        """)
+        result = db.execute(query, {"symbol": symbol, "date": date}).fetchone()
+
+        return float(result[0]) if result and result[0] is not None else None
+    except Exception as e:
+        print(f"⚠ Error retrieving price for {symbol} on {date}: {e}")
         return None
+
+
+def calculate_variations(assets: List[str], days: int) -> List[dict]:
+    """
+    Calculate percentage variations for asset prices.
+    """
+    variations = []
+    db = SessionLocal()
+    try:
+        for symbol in assets:
+            current_price = get_current_price(symbol)
+            past_date = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
+            past_price = get_price_by_date(db, symbol, past_date)
+
+            print(f"🔎 {symbol} - Current price: {current_price}, Price {days} days ago ({past_date}): {past_price}")
+
+            if current_price is not None and past_price is not None:
+                variation = ((current_price - past_price) / past_price) * 100
+                variations.append({"symbol": symbol, "variation": variation})
+            else:
+                variations.append({"symbol": symbol, "variation": None})
     finally:
-        conn.close()
+        db.close()
+
+    return variations
+
+
+def update_all_prices() -> None:
+    """
+    Updates the prices of all predefined assets and stores them in the database.
+    """
+    assets: List[str] = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]
+    db: Session = SessionLocal()
+
+    try:
+        for symbol in assets:
+            price: Optional[float] = get_current_price(symbol)
+            if price is not None:
+                date: str = datetime.now().strftime('%Y-%m-%d')
+                insert_price(db, symbol, price, date)
+                print(f"🔄 Updated: {symbol} - {price:.2f} USD")
+            else:
+                print(f"⚠ Warning: No price available for {symbol}")
+    except Exception as e:
+        print(f"⚠ Error updating prices: {e}")
+    finally:
+        db.close()
+
+
+
+
 
 
 

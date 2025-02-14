@@ -1,89 +1,99 @@
+from typing import List, Optional
 from fastapi import APIRouter, HTTPException
-from datetime import datetime, timedelta
-from managers.assets_manager import obtener_precio_actual, obtener_precio_por_fecha
-from managers.alerts_managers import obtener_alertas_recientes
+from pydantic import BaseModel  # ✅ Using Pydantic for response validation
+from managers.alerts_manager import get_recent_alerts
+from managers.assets_manager import get_current_price, calculate_variations
 
 router = APIRouter()
 
-# Constante para los activos
-ACTIVOS = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]
+# ✅ Define tracked assets
+ASSETS = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]
 
+# ✅ Pydantic Models for API responses
+class AssetResponse(BaseModel):
+    symbol: str  # ✅ Changed from "simbolo" to "symbol"
+    price: Optional[float]  # ✅ Changed from "precio" to "price"
 
-def calcular_variaciones(activos: list, dias: int) -> list:
-    """
-    Calcula las variaciones porcentuales de precios de los activos en los últimos 'dias' días.
-    """
-    variaciones = []
-    for simbolo in activos:
-        precio_actual = obtener_precio_actual(simbolo)
-        if precio_actual:
-            fecha_pasada = (datetime.now() - timedelta(days=dias)).strftime('%Y-%m-%d')
-            precio_pasado = obtener_precio_por_fecha(simbolo, fecha_pasada)
-            if precio_pasado:
-                variacion = ((precio_actual - precio_pasado) / precio_pasado) * 100
-                variaciones.append({"symbol": simbolo, "variation": variacion})
-            else:
-                variaciones.append({"symbol": simbolo, "variation": None})
-        else:
-            variaciones.append({"symbol": simbolo, "variation": None})
-    return variaciones
+class VariationResponse(BaseModel):
+    symbol: str  # ✅ Changed from "simbolo" to "symbol"
+    variation: Optional[float]  # ✅ Changed from "variacion" to "variation"
 
+class AlertResponse(BaseModel):
+    symbol: str  # ✅ Changed from "simbolo" to "symbol"
+    date: str  # ✅ Changed from "fecha" to "date"
+    message: str  # ✅ Changed from "mensaje" to "message"
 
-@router.get("/")
+@router.get("/", summary="Welcome Message")
 def endpoint_start():
     """
-    Endpoint para mostrar los comandos disponibles en la API.
+    Endpoint to display available API commands.
     """
     return {
-        "message": "Bienvenido a CotizAPI! 🤖💸🐂",
+        "message": "Welcome to CotizAPI! 🤖💸🐂",
         "endpoints": {
-            "/assets": "Obtener precios actuales de los activos.",
-            "/daily": "Ver variaciones diarias.",
-            "/weekly": "Ver variaciones semanales.",
-            "/alerts": "Ver alertas recientes generadas.",
+            "/assets": "Get current asset prices.",
+            "/daily": "View daily price variations.",
+            "/weekly": "View weekly price variations.",
+            "/alerts": "View recent alerts generated.",
         }
     }
 
-
-@router.get("/assets")
+@router.get("/assets", response_model=List[AssetResponse])
 def endpoint_assets():
     """
-    Endpoint para obtener precios actuales de los activos.
+    Endpoint to get current asset prices.
     """
-    precios = []
-    for simbolo in ACTIVOS:
-        precio = obtener_precio_actual(simbolo)
-        precios.append({"symbol": simbolo, "price": precio or None})
-    return {"assets": precios}
+    try:
+        return [{"symbol": symbol, "price": get_current_price(symbol)} for symbol in ASSETS]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving asset prices: {str(e)}")
 
 
-@router.get("/daily")
+@router.get("/daily", response_model=List[VariationResponse])
 def endpoint_daily():
     """
-    Endpoint para obtener variaciones diarias de los activos.
+    Endpoint to get daily price variations for assets.
     """
-    variaciones = calcular_variaciones(ACTIVOS, 1)
-    return {"daily_variations": variaciones}
+    try:
+        variations = calculate_variations(ASSETS, 1)
+        print(f"✅ Daily variations calculated: {variations}")
+
+        return [{"symbol": item.get("symbol", "Unknown"), "variation": item.get("variation")} for item in variations]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error calculating daily variations: {str(e)}")
 
 
-@router.get("/weekly")
+@router.get("/weekly", response_model=List[VariationResponse])
 def endpoint_weekly():
     """
-    Endpoint para obtener variaciones semanales de los activos.
+    Endpoint to get weekly price variations for assets.
     """
-    variaciones = calcular_variaciones(ACTIVOS, 7)
-    return {"weekly_variations": variaciones}
+    try:
+        variations = calculate_variations(ASSETS, 7)
+        return [{"symbol": item.get("symbol", "Unknown"), "variation": item.get("variation")} for item in variations]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error calculating weekly variations: {str(e)}")
 
-
-@router.get("/alerts")
+@router.get("/alerts", response_model=List[AlertResponse])
 def endpoint_alerts():
     """
-    Endpoint para obtener alertas recientes (últimas 24 horas).
+    Endpoint to get recent alerts (last 24 hours).
     """
-    alertas = obtener_alertas_recientes()
-    if not alertas:
-        raise HTTPException(status_code=404, detail="No se han registrado alertas en las últimas 24 horas.")
+    try:
+        alerts = get_recent_alerts()
+        if not alerts:
+            raise HTTPException(status_code=404, detail="No alerts recorded in the last 24 hours.")
+        return alerts
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving alerts: {str(e)}")
 
-    formatted_alerts = [{"symbol": alerta[0], "date": alerta[1], "message": alerta[2]} for alerta in alertas]
-    return {"alerts": formatted_alerts}
+
+
+
+
+
+
+
+
+
 
