@@ -41,7 +41,6 @@ def insert_price(db: Session, symbol: str, price: float, date: str) -> None:
     Inserts or updates the price of an asset in the database.
     """
     try:
-        # Try to update if the price already exists
         query_update = text("""
             UPDATE assets 
             SET price = :price 
@@ -50,18 +49,21 @@ def insert_price(db: Session, symbol: str, price: float, date: str) -> None:
         result = db.execute(query_update, {"symbol": symbol.upper(), "date": date, "price": price})
         db.commit()
 
-        # If no rows were updated, insert a new record
         if result.rowcount == 0:
+            print(f"⚠ No existing price for {symbol} on {date}, inserting new record.")
             query_insert = text("""
                 INSERT INTO assets (symbol, date, price) 
                 VALUES (:symbol, :date, :price)
             """)
             db.execute(query_insert, {"symbol": symbol.upper(), "date": date, "price": price})
             db.commit()
+        else:
+            print(f"✅ Updated price for {symbol} on {date}: {price}")
 
     except Exception as e:
         print(f"⚠ Error inserting/updating price for {symbol} on {date}: {e}")
         db.rollback()
+
 
 
 def get_price_by_date(db: Session, symbol: str, date: str) -> Optional[float]:
@@ -116,12 +118,15 @@ def update_all_prices() -> None:
     db: Session = SessionLocal()
 
     try:
-        updated_prices = [(symbol, price) for symbol in assets if (price := get_current_price(symbol)) is not None]
+        for symbol in assets:
+            price = get_current_price(symbol)
+            if price is None:
+                print(f"⚠ Warning: No new price for {symbol}. Skipping update.")
+                continue
 
-        for symbol, price in updated_prices:
             date = datetime.now().strftime('%Y-%m-%d')
+            print(f"🔄 Storing: {symbol} - {price:.2f} USD (Date: {date})")
             insert_price(db, symbol, price, date)
-            print(f"🔄 Updated: {symbol} - {price:.2f} USD")
 
     except Exception as e:
         print(f"⚠ Error updating prices: {e}")

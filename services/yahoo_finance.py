@@ -12,37 +12,30 @@ def is_weekend() -> bool:
 def get_current_price(symbol: str) -> Optional[float]:
     """
     Retrieves the latest available price of an asset from Yahoo Finance.
-
-    :param symbol: The asset's ticker symbol.
-    :return: The latest price as a float, or None if an error occurs.
     """
     try:
         ticker = yf.Ticker(symbol)
-
-        # Treat Bitcoin separately as it operates 24/7
-        if "BTC" in symbol:
-            history = ticker.history(period="1d", interval="5m")
-        else:
-            history = ticker.history(period="1d", interval="1h")  # Use 1-hour interval for better availability
+        history = ticker.history(period="1d", interval="1h")  # Usa 1h en vez de daily para asegurar datos
 
         if history.empty:
-            print(f"⚠ No recent data available for {symbol}. Trying last 7 days...")
+            print(f"⚠ No data for {symbol} today. Fetching last 7 days...")
             history = ticker.history(period="7d", interval="1d").dropna()
 
-            if history.empty:
-                print(f"⚠ No historical data available for {symbol}. Skipping.")
-                return None
+        if history.empty:
+            print(f"⚠ No data for {symbol} in the last 7 days. Returning None.")
+            return None
 
-        # Extract the last available date
+
         last_date = history.index[-1]
-        price = history["Close"].iloc[-1]
+        last_price = history["Close"].iloc[-1]
 
-        print(f"✅ {symbol}: Last available price: {price:.2f} USD (Date: {last_date})")
-        return price
+        print(f"✅ {symbol}: Last price: {last_price:.2f} USD (Date: {last_date})")
+        return last_price
 
     except Exception as e:
         print(f"⚠ Error retrieving price for {symbol}: {e}")
         return None
+
 
 
 def update_prices(assets: List[str]) -> Dict[str, Optional[float]]:

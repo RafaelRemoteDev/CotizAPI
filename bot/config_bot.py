@@ -59,31 +59,36 @@ async def assets(update: Update, context: CallbackContext):
 
 async def update_prices(update: Update, context: CallbackContext):
     """
-    Fetches new asset prices, updates the database, and sends results to the user.
+    Fetches new asset prices from Yahoo Finance, updates the database, and sends results to the user.
     """
-    await update.message.reply_text("⏳ Fetching new asset prices...")
+    await update.message.reply_text("⏳ Fetching the latest asset prices...")
 
-    assets_list: List[str] = list(ASSETS.keys())  # Using the keys from ASSETS dictionary
+    from services.yahoo_finance import get_current_price  # Ensure fetching from API
+    from managers.assets_manager import insert_price
+    from sqlalchemy.orm import Session
+    from db.database import SessionLocal
+
+    assets = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]
     db: Session = SessionLocal()
 
     messages = []
     try:
-        for symbol in assets_list:
-            price: Optional[float] = get_current_price(symbol)
+        for symbol in assets:
+            price = get_current_price(symbol)  # Fetch the latest price from Yahoo Finance
             if price is not None:
-                date: str = datetime.now().strftime('%Y-%m-%d')
-                insert_price(db, symbol, price, date)
+                date = datetime.now().strftime('%Y-%m-%d')  # Get the current date (YYYY-MM-DD)
+                insert_price(db, symbol, price, date)  # Store it in the database
                 message = f"🔄 Updated: {symbol} - {price:.2f} USD"
                 messages.append(message)
             else:
-                warning = f"⚠ Warning: No price available for {symbol}"
-                messages.append(warning)
+                messages.append(f"⚠ Warning: No price available for {symbol}")
+
+        await update.message.reply_text("\n".join(messages))  # Send update to the user
+
     except Exception as e:
-        messages.append(f"⚠ Error updating prices: {e}")
+        await update.message.reply_text(f"⚠ Error updating prices: {e}")
     finally:
         db.close()
-
-    await update.message.reply_text("\n".join(messages))
 
 
 async def daily(update: Update, context: CallbackContext):
