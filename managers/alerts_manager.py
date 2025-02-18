@@ -46,12 +46,9 @@ def generate_alerts() -> None:
 def insert_alert(db: Session, symbol: str, message: str) -> None:
     """
     Inserts a new alert into the database.
-
-    :param db: SQLAlchemy database session.
-    :param symbol: The symbol of the asset triggering the alert.
-    :param message: The message describing the alert.
     """
-    new_alert = Alert(symbol=symbol, date=datetime.utcnow().date(), message=message)  # ✅ Using DATE instead of DATETIME
+    print(f"🚨 Inserting alert -> Symbol: {symbol} | Message: {message}")
+    new_alert = Alert(symbol=symbol, date=datetime.utcnow(), message=message)
     db.add(new_alert)
     db.commit()
 
@@ -59,18 +56,18 @@ def insert_alert(db: Session, symbol: str, message: str) -> None:
 def get_recent_alerts() -> list[dict[str, str]]:
     """
     Retrieves recent alerts from the last 24 hours.
-
-    :return: A list of dictionaries containing recent alerts with symbol, date, and message.
     """
     db: Session = SessionLocal()
     try:
-        alerts: list[Alert] = db.query(Alert).filter(Alert.date >= datetime.utcnow().date() - timedelta(days=1)).all()
+        alerts = db.query(Alert).filter(Alert.date >= datetime.utcnow() - timedelta(days=1)).all()
+        print(f"📝 Alerts fetched from DB: {alerts}")  # <-- Agregar esta línea para depurar
         return [
             {"symbol": alert.symbol, "date": alert.date.isoformat(), "message": alert.message}
             for alert in alerts
         ]
     finally:
         db.close()
+
 
 
 

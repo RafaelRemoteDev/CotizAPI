@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from api.endpoints import router as api_router
 from bot.config_bot import main as bot_main
+from managers.alerts_manager import generate_alerts
 from managers.assets_manager import update_all_prices
 from db.database import initialize_database
 
@@ -46,6 +47,11 @@ if __name__ == "__main__":
         print("🔄 Updating asset prices...")
         update_all_prices()
         print("✅ Prices updated.")
+
+        print("⚠️ Generating alerts based on price changes...")
+        generate_alerts()
+
+        print("✅ Prices updated and alerts generated.")
 
         # ✅ Start Telegram bot in a separate thread with asyncio loop
         bot_thread = threading.Thread(target=start_telegram_bot, daemon=True)

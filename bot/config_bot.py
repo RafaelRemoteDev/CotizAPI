@@ -169,14 +169,20 @@ async def weekly(update: Update, context: CallbackContext):
 
 async def alerts(update: Update, context: CallbackContext):
     """
-    Displays recent alerts (last 24 hours).
+    Displays recent alerts from the last 24 hours.
     """
-    alerts = get_recent_alerts()
-    if not alerts:
+    alert_list = get_recent_alerts()
+    if not alert_list:
         await update.message.reply_text("✅ No alerts recorded in the last 24 hours.")
         return
 
-    messages = [f"🔔 Alert for {symbol}! {message} (Date: {date})" for symbol, date, message in alerts]
+    messages = [
+        f"🔔 Alert for {alert['symbol']}! {alert['message']} (Date: {alert['date']})"
+        for alert in alert_list
+    ]
+
+    print(f"📢 Sending alerts -> {messages}")
+
     await update.message.reply_text("\n".join(messages), parse_mode="HTML")
 
 
