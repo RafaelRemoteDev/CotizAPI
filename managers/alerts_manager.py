@@ -6,8 +6,8 @@ from managers.assets_manager import calculate_variations
 from config import ASSETS
 
 # Alert thresholds defined directly here
-DAILY_THRESHOLD = 3.0    # 3% daily variation
-WEEKLY_THRESHOLD = 5.0   # 5% weekly variation
+DAILY_THRESHOLD = 2.0    # 3% daily variation
+WEEKLY_THRESHOLD = 4.0   # 5% weekly variation
 MONTHLY_THRESHOLD = 7.0  # 7% monthly variation
 
 

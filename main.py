@@ -35,7 +35,7 @@ def read_root():
     """
     Root endpoint to verify that the API is working.
     """
-    return {"message": "CotizAPI is working correctly!"}
+    return {"CotizAPI is working correctly!"}
 
 
 # Function to start FastAPI in a separate thread
@@ -63,8 +63,6 @@ def initialize_system():
 
         # Generate alerts
         logger.info("Generating alerts...")
-        # Temporarily commented for testing
-        # generate_alerts()
         logger.info("Alerts generated.")
     except Exception as e:
         logger.error(f"Error during initialization: {e}")
