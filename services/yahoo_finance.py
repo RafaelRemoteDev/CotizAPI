@@ -1,78 +1,98 @@
 import yfinance as yf
 from datetime import datetime
-from typing import Optional, Dict, List
 import time
+import random
+from loguru import logger
 
 
 def is_weekend() -> bool:
-    """ Checks if today is a weekend (Saturday or Sunday). """
-    return datetime.now().weekday() >= 5  # Saturday (5) or Sunday (6)
+    """
+    Checks if today is a weekend (Saturday or Sunday).
+
+    Returns:
+    -------
+        True if it's weekend, False otherwise.
+    """
+    weekday = datetime.now().weekday()
+    return weekday >= 5  # 5 = Saturday, 6 = Sunday
 
 
-def get_current_price(symbol: str) -> Optional[float]:
+def get_current_price(symbol: str) -> float | None:
     """
     Retrieves the latest available price of an asset from Yahoo Finance.
+    Implements a simple retry mechanism with delay.
+
+    Args:
+    ----
+        symbol: Asset symbol.
+
+    Returns:
+    -------
+        Current price or None if not available.
     """
-    try:
-        ticker = yf.Ticker(symbol)
-        history = ticker.history(period="1d", interval="1h")  # Usa 1h en vez de daily para asegurar datos
+    max_retries = 3
 
-        if history.empty:
-            print(f"⚠ No data for {symbol} today. Fetching last 7 days...")
-            history = ticker.history(period="7d", interval="1d").dropna()
+    for attempt in range(max_retries):
+        try:
+            # If not the first attempt, wait with exponential backoff
+            if attempt > 0:
+                wait_time = (2 ** attempt) + random.uniform(1, 3)
+                logger.debug(f"Retrying {symbol} in {wait_time:.2f} seconds (attempt {attempt + 1}/{max_retries})...")
+                time.sleep(wait_time)
 
-        if history.empty:
-            print(f"⚠ No data for {symbol} in the last 7 days. Returning None.")
-            return None
+            ticker = yf.Ticker(symbol)
+            data = ticker.history(period="1d")
+
+            if not data.empty and 'Close' in data.columns:
+                price = float(data['Close'].iloc[-1])
+                logger.info(f"{symbol}: Last price from Yahoo: {price:.2f} USD")
+                return price
+            else:
+                logger.warning(f"No data available for {symbol}")
+
+        except Exception as e:
+            logger.warning(f"Attempt {attempt + 1}/{max_retries} failed for {symbol}: {e}")
+            if attempt == max_retries - 1:
+                logger.error(f"All retries failed for {symbol}: {e}")
+
+    return None
 
 
-        last_date = history.index[-1]
-        last_price = history["Close"].iloc[-1]
-
-        print(f"✅ {symbol}: Last price: {last_price:.2f} USD (Date: {last_date})")
-        return last_price
-
-    except Exception as e:
-        print(f"⚠ Error retrieving price for {symbol}: {e}")
-        return None
-
-
-
-def update_prices(assets: List[str]) -> Dict[str, Optional[float]]:
+def get_multiple_prices(symbols: list[str]) -> dict[str, float | None]:
     """
-    Updates the prices for a list of assets.
+    Gets current prices for multiple assets with a patient approach.
+    Gets each symbol individually with delays to avoid rate limits.
 
-    :param assets: List of asset ticker symbols.
-    :return: Dictionary with the updated prices.
+    Args:
+    ----
+        symbols: List of asset symbols.
+
+    Returns:
+    -------
+        Dictionary with symbols as keys and prices as values.
     """
     if is_weekend():
-        print("⚠ The market is closed. Prices will not be updated today.")
-        return {}
+        logger.warning("Today is weekend. Market prices may not be up-to-date.")
 
-    results: Dict[str, Optional[float]] = {}
+    results = {}
 
-    for symbol in assets:
-        print(f"🔄 Updating price for {symbol}...")
-        time.sleep(2)  # Prevent request blocking by Yahoo Finance
+    # Process symbols one by one with delays between requests
+    for symbol in symbols:
+        # Add random delay between requests
+        if symbol != symbols[0]:  # Don't wait for the first symbol
+            wait_time = random.uniform(3, 6)  # Wait between 3 and 6 seconds
+            logger.debug(f"Waiting {wait_time:.2f} seconds before requesting {symbol}...")
+            time.sleep(wait_time)
+
+        # Get individual price with retries
         price = get_current_price(symbol)
+        results[symbol] = price
 
         if price is not None:
-            results[symbol] = price
-            print(f"✅ {symbol}: Last updated price: {price:.2f} USD")
+            logger.info(f"Successfully got price for {symbol}: {price:.2f} USD")
         else:
-            print(f"⚠ Could not update the price for {symbol}.")
-            results[symbol] = None
+            logger.warning(f"Could not get price for {symbol} after retries")
 
     return results
-
-
-# Execution of the script
-if __name__ == "__main__":
-    assets_list = ["GC=F", "SI=F", "BTC-USD", "ZW=F", "CL=F"]
-    updated_prices = update_prices(assets_list)
-
-    print("\n📊 Final Results:")
-    for symbol, price in updated_prices.items():
-        print(f"🔹 {symbol}: {price if price else 'Price unavailable'}")
 
 

@@ -1,10 +1,31 @@
+# Web framework for building APIs with Python
 fastapi~=0.115.8
+
+# Library for making HTTP requests
 requests~=2.32.3
-yfinance~=0.2.52
+
+# Library for downloading historical market data from Yahoo Finance
+yfinance~=0.2.61
+
+# Better logging for Python
 loguru~=0.7.3
+
+# ASGI server for FastAPI, Starlette and other ASGI frameworks
 uvicorn~=0.34.0
+
+# Load environment variables from .env files
 python-dotenv~=1.0.1
+
+# ORM for SQL databases
 SQLAlchemy~=2.0.36
-telegram~=0.0.1
+
+# Python wrapper for the Telegram Bot API
+
+pyTelegramBotAPI~=5.3.0  # Esta es la biblioteca correcta, no 'telegram' o 'telebot'
+
+# Data validation and settings management using Python type hints
 pydantic~=2.9.2
-pytest~=8.3.4
+
+# Testing framework for Python
+
+starlette~=0.45.3
