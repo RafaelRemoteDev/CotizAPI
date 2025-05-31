@@ -20,12 +20,8 @@ python-dotenv~=1.0.1
 SQLAlchemy~=2.0.36
 
 # Python wrapper for the Telegram Bot API
+pyTelegramBotAPI~=4.24.0
 
-
-# Data validation and settings management using Python type hints
-
-# Testing framework for Python
-
-
-telebot~=0.0.5
-telegram~=0.0.1
+# Additional useful packages
+pandas~=2.2.3
+numpy~=2.2.1
